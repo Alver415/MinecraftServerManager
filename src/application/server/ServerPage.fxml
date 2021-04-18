@@ -44,45 +44,35 @@
 <?import javafx.scene.text.Font?>
 
 
-<BorderPane prefHeight="600" prefWidth="800" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ServerPageController">
-   <top>
-    <MenuBar BorderPane.alignment="CENTER">
-      <menus>
-        <Menu text="File">
-          <items>
-            <MenuItem onAction="#openEulaDialog" text="End User License Agreement" />
-            <MenuItem onAction="#openServerConfiguration" text="Server Properties" />
-          </items>
-        </Menu>
-        <Menu text="Help">
-          <items>
-            <MenuItem text="About MyHelloApp" />
-          </items>
-        </Menu>
-      </menus>
-    </MenuBar>
-   </top>
-   <center>
-      <BorderPane BorderPane.alignment="CENTER">
-         <center>
-            <TextArea fx:id="console" editable="false" wrapText="true" BorderPane.alignment="CENTER">
-               <font>
-                  <Font name="Monospaced Regular" size="12.0" />
-               </font>
-            </TextArea>
-         </center>
-         <top>
-            <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-               <buttons>
-                  <Button onAction="#clear" text="Clear" />
-                  <Button onAction="#stop" 	text="Stop"  fx:id="stopButton"  textFill="#cc0000" />
-                  <Button onAction="#start" text="Start" fx:id="startButton" textFill="#00cc00" />
-               </buttons>
-            </ButtonBar>
-         </top>
-         <bottom>
-            <TextField fx:id="input" onAction="#submit" BorderPane.alignment="CENTER" />
-         </bottom>
-      </BorderPane>
-   </center>
+<BorderPane prefHeight="600" prefWidth="800"
+	xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="application.server.ServerPageController">
+	<center>
+		<BorderPane BorderPane.alignment="CENTER">
+			<center>
+				<TextArea fx:id="console" editable="false" wrapText="true"
+					BorderPane.alignment="CENTER">
+					<font>
+						<Font name="Monospaced Regular" size="12.0" />
+					</font>
+				</TextArea>
+			</center>
+			<top>
+				<ButtonBar prefHeight="40.0" prefWidth="200.0"
+					BorderPane.alignment="CENTER">
+					<buttons>
+						<Button onAction="#clear" text="Clear" />
+						<Button onAction="#stop" text="Stop" fx:id="stopButton"
+							textFill="#cc0000" />
+						<Button onAction="#start" text="Start" fx:id="startButton"
+							textFill="#00cc00" />
+					</buttons>
+				</ButtonBar>
+			</top>
+			<bottom>
+				<TextField fx:id="input" onAction="#submit"
+					BorderPane.alignment="CENTER" />
+			</bottom>
+		</BorderPane>
+	</center>
 </BorderPane>

@@ -24,3 +24,5 @@ hs_err_pid*
 
 # binary #
 bin
+/target/
+servers/
