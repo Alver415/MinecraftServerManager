@@ -1,8 +1,0 @@
-[ {
-  "serverName" : "Minecraft Server",
-  "serverDirectory" : "file:///C:/projects/MinecraftServerManager/servers/Minecraft%20Server/",
-  "minecraftServerJar" : "file:///C:/projects/MinecraftServerManager/server.jar",
-  "maximumMemory" : "2g",
-  "initialMemory" : "512m",
-  "serverProperties" : null
-} ]

@@ -1,42 +1,53 @@
 package application;
 
+import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
+
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.collections4.BidiMap;
+import org.apache.commons.collections4.bidimap.DualHashBidiMap;
+import org.apache.commons.lang3.NotImplementedException;
 
 import application.create.CreateDialogController;
 import application.preferences.PreferencesDialogController;
 import application.server.ServerPageController;
+import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Accordion;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TitledPane;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.TextFieldTreeCell;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
@@ -45,31 +56,46 @@ import model.ServerConfig;
 public class MainSceneController implements Initializable {
 	private static final Path PREFERENCES_PROPERTIES = Paths.get("preferences.properties");
 
+	private static final String DARK_CSS = "-fx-base: rgba(60, 60, 60, 255);";
+	private static final String LIGHT_CSS = "";
+
 	private static final String EULA_COMMENT = "By changing the setting below to TRUE you are indicating your agreement to our EULA (https://account.mojang.com/documents/minecraft_eula).";
 
 	private Properties preferences;
 
-	private Set<ServerConfig> serverConfigs;
-
-	private Map<ServerConfig, Tab> tabMap;
+	private BidiMap<ServerConfig, TitledPane> paneMap = new DualHashBidiMap<>();
+	private BidiMap<ServerConfig, Tab> tabMap = new DualHashBidiMap<>();
 
 	@FXML
-	private TreeView<Object> treeView;
+	private Scene scene;
+
+	@FXML
+	private Accordion accordion;
 
 	@FXML
 	private TabPane tabPane;
 
+	@FXML
+	private ToggleButton darkModeToggle;
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		initializePreferences();
+		darkModeToggle
+				.setOnAction(event -> scene.getRoot().setStyle(darkModeToggle.isSelected() ? DARK_CSS : LIGHT_CSS));
+		tabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+			ServerConfig serverConfig = tabMap.getKey(newValue);
+			setSelectedServer(serverConfig);
+		});
 
-		tabMap = new HashMap<>();
-		serverConfigs = new HashSet<>(Utils.loadServerConfigs());
-		initializeTreeView();
-		refreshTreeView();
-		if (serverConfigs.isEmpty()) {
-			createServer();
-		}
+		initializePreferences();
+		Utils.loadServerConfigs().forEach(serverConfig -> createServerPane(serverConfig));
+
+		getServerConfigs().stream().findFirst().ifPresentOrElse(serverConfig -> setSelectedServer(serverConfig),
+				() -> createServer());
+	}
+
+	private Set<ServerConfig> getServerConfigs() {
+		return paneMap.keySet();
 	}
 
 	private void initializePreferences() {
@@ -85,64 +111,148 @@ public class MainSceneController implements Initializable {
 		}
 	}
 
-	private void refreshTreeView() {
-		TreeItem<Object> root = treeView.getRoot();
-		root.getChildren().clear();
-
-		for (ServerConfig serverConfig : serverConfigs) {
-			TreeItem<Object> serverItem = buildTreeItem(serverConfig.getServerDirectory());
-			serverItem.setValue(serverConfig);
-			root.getChildren().add(serverItem);
+	private void setSelectedServer(ServerConfig serverConfig) {
+		if (serverConfig == null) {
+			return;
 		}
-	}
-
-	private TreeItem<Object> buildTreeItem(Path path) {
-		TreeItem<Object> item = new TreeItem<>();
-		item.setValue(path);
-
-		if (Files.isDirectory(path)) {
-			try (DirectoryStream<Path> stream = Files.newDirectoryStream(path)) {
-				stream.forEach(childPath -> {
-					TreeItem<Object> child = buildTreeItem(childPath);
-					item.getChildren().add(child);
-				});
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		item.getChildren().sort(TREE_ITEM_COMPARATOR);
-
-		return item;
-	}
-
-	private void selectServerTab(ServerConfig serverConfig) {
-		Tab tab;
-		if (tabMap.containsKey(serverConfig)) {
-			tab = tabMap.get(serverConfig);
-		} else {
-			tab = createServerTab(serverConfig);
-			tabMap.put(serverConfig, tab);
-		}
-
-		if (!tabPane.getTabs().contains(tab)) {
-			tabPane.getTabs().add(tab);
-		}
+		Tab tab = getServerTab(serverConfig);
 		tabPane.getSelectionModel().select(tab);
+
+		TitledPane pane = getServerPane(serverConfig);
+		accordion.expandedPaneProperty().set(pane);
+	}
+
+	private TitledPane getServerPane(ServerConfig serverConfig) {
+		if (!paneMap.containsKey(serverConfig)) {
+			createServerPane(serverConfig);
+		}
+		return paneMap.get(serverConfig);
+	}
+
+	private TitledPane createServerPane(ServerConfig serverConfig) {
+		TreeView<Path> treeView = new TreeView<>(buildTreeItem(serverConfig.getServerDirectory()));
+		initializeTreeView(treeView);
+		TitledPane pane = new TitledPane(serverConfig.getServerName(), treeView);
+		pane.expandedProperty()
+				.addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+					if (newValue.booleanValue()) {
+						Utils.runFX(() -> {
+							setSelectedServer(serverConfig);
+						});
+					}
+				});
+		paneMap.put(serverConfig, pane);
+		if (!accordion.getPanes().contains(pane)) {
+			accordion.getPanes().add(pane);
+			accordion.getPanes().sort(new Comparator<TitledPane>() {
+				@Override
+				public int compare(TitledPane o1, TitledPane o2) {
+					String t1 = o1.getText();
+					String t2 = o2.getText();
+					return t1.compareTo(t2);
+				}
+			});
+		}
+		return pane;
+	}
+
+	private Tab getServerTab(ServerConfig serverConfig) {
+		if (!tabMap.containsKey(serverConfig)) {
+			createServerTab(serverConfig);
+		}
+		return tabMap.get(serverConfig);
 	}
 
 	private Tab createServerTab(ServerConfig serverConfig) {
 		Tab tab = new Tab();
+		tab.setText(serverConfig.getServerName());
 		try {
 			FXMLLoader loader = Utils.fxmlLoader(ServerPageController.class);
 			Parent parent = loader.load();
 			ServerPageController controller = loader.getController();
 			controller.setServerConfig(serverConfig);
 			tab.setContent(parent);
-			tab.setText(serverConfig.getServerName());
-		} catch (IOException e) {
+			tab.setOnCloseRequest((Event event) -> {
+				if (controller.isProcessRunning()) {
+					Alert alert = new Alert(AlertType.WARNING);
+					alert.setTitle("Confirmation Dialog");
+					alert.setHeaderText("The Server is Still Running");
+					alert.setContentText("Closing this window will stop the process abruptly.");
+					Optional<ButtonType> result = alert.showAndWait();
+					if (result.get() != ButtonType.OK) {
+						event.consume();
+					} else {
+						controller.stop();
+					}
+				}
+			});
+			tab.setOnClosed((Event event) -> {
+				tabMap.remove(serverConfig);
+			});
+		} catch (
+
+		IOException e) {
+			tab.setText("ERROR");
 			e.printStackTrace();
 		}
+		tabMap.put(serverConfig, tab);
+		if (!tabPane.getTabs().contains(tab)) {
+			tabPane.getTabs().add(tab);
+		}
 		return tab;
+	}
+
+	private void setupTreeItemListener(TreeItem<Path> item) {
+		Path path = (item.getValue());
+		Utils.startThread(() -> {
+			try {
+				WatchService watchService = Utils.getWatchService();
+				path.register(watchService, ENTRY_CREATE, ENTRY_DELETE);
+
+				boolean poll = true;
+				while (poll) {
+					WatchKey key = watchService.take();
+					for (WatchEvent<?> event : key.pollEvents()) {
+						if (event.kind() == ENTRY_CREATE) {
+							Path createdPath = path.resolve((Path) event.context());
+							TreeItem<Path> newChild = new TreeItem<>(createdPath);
+							item.getChildren().add(newChild);
+							item.getChildren().sort(TREE_ITEM_COMPARATOR);
+						} else if (event.kind() == ENTRY_DELETE) {
+							item.getChildren().stream()
+									.filter(i -> i.getValue().equals(path.resolve((Path) event.context()))).findFirst()
+									.ifPresent(oldChild -> item.getChildren().remove(oldChild));
+							;
+						}
+					}
+					poll = key.reset();
+				}
+			} catch (IOException | InterruptedException e) {
+				e.printStackTrace();
+			}
+		});
+
+	}
+
+	private TreeItem<Path> buildTreeItem(Path path) {
+		TreeItem<Path> item = new TreeItem<>();
+		item.setValue(path);
+
+		if (Files.isDirectory(path)) {
+			setupTreeItemListener(item);
+			try (DirectoryStream<Path> stream = Files.newDirectoryStream(path)) {
+				stream.forEach(childPath -> {
+					item.getChildren().add(buildTreeItem(childPath));
+				});
+				item.getChildren().sort(TREE_ITEM_COMPARATOR);
+				item.setExpanded(true);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return item;
+
 	}
 
 	public void createServer() {
@@ -150,7 +260,7 @@ public class MainSceneController implements Initializable {
 			FXMLLoader loader = Utils.fxmlLoader(CreateDialogController.class);
 			Dialog<ButtonType> dialog = loader.load();
 			CreateDialogController controller = loader.getController();
-			controller.setServerConfigs(serverConfigs);
+			controller.setServerConfigs(getServerConfigs());
 			controller.setDefaultServerDirectory(Paths.get(preferences.getProperty("default.server.directory")));
 			dialog.showAndWait().filter(response -> {
 				return Objects.equals(response.getButtonData(), ButtonData.OK_DONE);
@@ -162,15 +272,13 @@ public class MainSceneController implements Initializable {
 				serverConfig.setMinecraftServerJar(Paths.get(preferences.getProperty("default.minecraft.jar")));
 				serverConfig.setMaximumMemory(preferences.getProperty("default.maximum.memory"));
 				serverConfig.setInitialMemory(preferences.getProperty("default.initial.memory"));
-				serverConfigs.add(serverConfig);
+
+				// Refresh UI
+				setSelectedServer(serverConfig);
 
 				// Save data
 				saveAllServers();
 				acceptEula(serverConfig);
-
-				// Refresh UI
-				refreshTreeView();
-				selectServerTab(serverConfig);
 			});
 
 		} catch (IOException e) {
@@ -191,7 +299,7 @@ public class MainSceneController implements Initializable {
 	}
 
 	public void saveAllServers() {
-		Utils.saveServerConfigs(serverConfigs);
+		Utils.saveServerConfigs(getServerConfigs());
 	}
 
 	public void openPreferencesDialog() {
@@ -225,84 +333,53 @@ public class MainSceneController implements Initializable {
 		}
 	}
 
-	private void initializeTreeView() {
-		TreeItem<Object> root = new TreeItem<>("Servers");
-		treeView.setRoot(root);
-
-		treeView.setCellFactory(new Callback<TreeView<Object>, TreeCell<Object>>() {
+	private void initializeTreeView(TreeView<Path> treeView) {
+		treeView.setCellFactory(new Callback<TreeView<Path>, TreeCell<Path>>() {
 			@Override
-			public TreeCell<Object> call(TreeView<Object> param) {
-				TextFieldTreeCell<Object> treeCell = new TextFieldTreeCell<Object>(new StringConverter<Object>() {
+			public TreeCell<Path> call(TreeView<Path> param) {
+				TreeCell<Path> treeCell = new TextFieldTreeCell<Path>(new StringConverter<Path>() {
 					@Override
-					public String toString(Object object) {
-						if (object instanceof ServerConfig) {
-							return ((ServerConfig) object).getServerName();
-						} else if (object instanceof Path) {
-							return ((Path) object).getFileName().toString();
-						} else {
-							return object.toString();
-						}
+					public String toString(Path object) {
+						return object.getFileName().toString();
 					}
 
 					@Override
-					public Object fromString(String string) {
-						return string;
+					public Path fromString(String string) {
+						throw new NotImplementedException();
 					}
-				});
-				treeCell.addEventFilter(MouseEvent.MOUSE_PRESSED, (MouseEvent e) -> {
-					boolean doubleClick = e.getClickCount() % 2 == 0;
-					if (doubleClick && Objects.equals(e.getButton(), MouseButton.PRIMARY))
-						e.consume();
 				});
 				return treeCell;
 			}
 		});
-
 		treeView.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
 				boolean doubleClick = e.getClickCount() % 2 == 0;
-				TreeItem<Object> selectedItem = treeView.getSelectionModel().getSelectedItem();
+				TreeItem<Path> selectedItem = treeView.getSelectionModel().getSelectedItem();
 				if (doubleClick && selectedItem != null) {
-					if (selectedItem.getValue() instanceof ServerConfig) {
-						selectServerTab((ServerConfig) selectedItem.getValue());
-					} else if (selectedItem.getValue() instanceof Path) {
-						String absolutePath = ((Path) selectedItem.getValue()).toAbsolutePath().toString();
-						MinecraftServerManager.INSTANCE.getHostServices().showDocument(absolutePath);
-					}
-				}
-			}
-		});
-
-		treeView.setOnKeyPressed(new EventHandler<KeyEvent>() {
-			@Override
-			public void handle(KeyEvent event) {
-				if (Objects.equals(KeyCode.F5, event.getCode())) {
-					refreshTreeView();
+					String absolutePath = selectedItem.getValue().toAbsolutePath().toString();
+					MinecraftServerManager.INSTANCE.getHostServices().showDocument(absolutePath);
 				}
 			}
 		});
 	}
 
-	private Comparator<TreeItem<Object>> TREE_ITEM_COMPARATOR = new Comparator<TreeItem<Object>>() {
+	private static final Comparator<TreeItem<Path>> TREE_ITEM_COMPARATOR = new Comparator<TreeItem<Path>>() {
 		@Override
-		public int compare(TreeItem<Object> t1, TreeItem<Object> t2) {
-			Object o1 = t1.getValue();
-			Object o2 = t2.getValue();
-			if (o1 instanceof Path && o2 instanceof Path) {
-				Path p1 = (Path) o1;
-				Path p2 = (Path) o2;
-				int a = 0;
-				if (Files.isDirectory(p1)) {
-					a--;
-				} else if (Files.isDirectory(p2)) {
-					a++;
-				}
-				if (a != 0) {
-					return a;
-				}
+		public int compare(TreeItem<Path> o1, TreeItem<Path> o2) {
+			Path p1 = o1.getValue();
+			Path p2 = o2.getValue();
+			int i = 0;
+			if (Files.isDirectory(p1)) {
+				i--;
 			}
-			return StringUtils.compare(o1.toString(), o2.toString());
+			if (Files.isDirectory(p2)) {
+				i++;
+			}
+			if (i != 0) {
+				return i;
+			}
+			return p1.compareTo(p2);
 		}
 	};
 

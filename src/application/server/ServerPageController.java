@@ -17,7 +17,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import application.ServerConfigurationController;
-import javafx.application.Platform;
+import application.Utils;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -131,20 +131,20 @@ public class ServerPageController implements Initializable {
 	}
 
 	public void clear() {
-		runFX(() -> console.clear());
+		Utils.runFX(() -> console.clear());
 	}
 
 	public void stop() {
 		writeToProcess("stop");
 	}
 
-	private boolean isProcessRunning() {
+	public boolean isProcessRunning() {
 		return process != null && process.isAlive();
 	}
 
 	private void updateUI() {
 		boolean running = isProcessRunning();
-		runFX(() -> {
+		Utils.runFX(() -> {
 			startButton.setDisable(running);
 			stopButton.setDisable(!running);
 			input.setDisable(!running);
@@ -171,7 +171,7 @@ public class ServerPageController implements Initializable {
 	}
 
 	private void printToConsole(String prefix, String string) {
-		runFX(() -> {
+		Utils.runFX(() -> {
 			String line = prefix + string + NEW_LINE;
 			if (Objects.equals(ERR, prefix)) {
 				System.err.print(line);
@@ -191,7 +191,7 @@ public class ServerPageController implements Initializable {
 				if (CollectionUtils.isEmpty(commandHistory)) {
 					return;
 				}
-				runFX(() -> {
+				Utils.runFX(() -> {
 					switch (event.getCode()) {
 					case UP:
 						commandHistoryIndex--;
@@ -218,7 +218,7 @@ public class ServerPageController implements Initializable {
 	}
 
 	private void pipeInputStreamToConsole(String prefix, InputStream inputStream) {
-		startThread(() -> {
+		Utils.startThread(() -> {
 			try (var reader = new BufferedReader(new InputStreamReader(inputStream))) {
 				String line;
 				while ((line = reader.readLine()) != null) {
@@ -229,14 +229,6 @@ public class ServerPageController implements Initializable {
 			}
 
 		});
-	}
-
-	private void runFX(Runnable runnable) {
-		Platform.runLater(runnable);
-	}
-
-	private void startThread(Runnable runnable) {
-		new Thread(runnable).start();
 	}
 
 }

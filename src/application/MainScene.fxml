@@ -33,14 +33,18 @@
 -->
 
 <?import javafx.scene.Scene?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.CustomMenuItem?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.BorderPane?>
 
-<Scene xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.MainSceneController">
+<Scene fx:id="scene" xmlns="http://javafx.com/javafx/16"
+	xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="application.MainSceneController">
 	<root>
 		<BorderPane prefHeight="600" prefWidth="800">
 			<top>
@@ -55,19 +59,27 @@
 						</Menu>
 						<Menu text="Options">
 							<items>
-								<MenuItem onAction="#openPreferencesDialog" text="Preferences" />
+								<MenuItem onAction="#openPreferencesDialog"
+									text="Preferences" />
 								<MenuItem text="About 'Minecraft Server Manager'" />
+								<CustomMenuItem mnemonicParsing="false">
+									<content>
+										<ToggleButton fx:id="darkModeToggle"
+											mnemonicParsing="false" text="Dark Mode" />
+									</content>
+								</CustomMenuItem>
 							</items>
 						</Menu>
 					</menus>
 				</MenuBar>
 			</top>
-			<left>
-				<TreeView fx:id="treeView" prefHeight="200.0" prefWidth="200.0" showRoot="false" BorderPane.alignment="CENTER" />
-			</left>
 			<center>
-				<TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+				<TabPane fx:id="tabPane" prefHeight="200.0"
+					prefWidth="200.0" BorderPane.alignment="CENTER" />
 			</center>
+			<left>
+				<Accordion fx:id="accordion" BorderPane.alignment="CENTER" />
+			</left>
 		</BorderPane>
 	</root>
 </Scene>

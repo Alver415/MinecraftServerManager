@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -19,11 +21,17 @@ import org.apache.commons.lang3.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TextField;
 import model.ServerConfig;
 
 public class Utils {
+
+	private static WatchService WATCH_SERVICE;
+
+	private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
+	private static final ObjectWriter JSON_WRITER = JSON_MAPPER.writerWithDefaultPrettyPrinter();
 
 	public static FXMLLoader fxmlLoader(Class<?> clazz) {
 		return fxmlLoader(clazz, null);
@@ -34,12 +42,17 @@ public class Utils {
 				resourceBundle);
 	}
 
+	public static void runFX(Runnable runnable) {
+		Platform.runLater(runnable);
+	}
+
+	public static void startThread(Runnable runnable) {
+		new Thread(runnable).start();
+	}
+
 	public static String getValueWithDefault(TextField textField) {
 		return !StringUtils.isEmpty(textField.getText()) ? textField.getText() : textField.getPromptText();
 	}
-
-	private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
-	private static final ObjectWriter JSON_WRITER = JSON_MAPPER.writerWithDefaultPrettyPrinter();
 
 	public static Properties loadProperties(Path path) {
 		Properties properties = new Properties();
@@ -94,5 +107,16 @@ public class Utils {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static synchronized WatchService getWatchService() {
+		if (WATCH_SERVICE == null) {
+			try {
+				WATCH_SERVICE = FileSystems.getDefault().newWatchService();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return WATCH_SERVICE;
 	}
 }

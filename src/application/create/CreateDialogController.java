@@ -28,7 +28,7 @@ import model.ServerConfig;
 public class CreateDialogController implements Initializable {
 
 	private Set<ServerConfig> serverConfigs = new HashSet<>();
-	private Path defaultServerDirectory = Paths.get("servers/");
+	private Path defaultServerDirectory = Paths.get("servers");
 
 	@FXML
 	private Dialog<ButtonType> dialog;
@@ -60,7 +60,7 @@ public class CreateDialogController implements Initializable {
 	private void setServerDirectoryInputPrompt() {
 		String serverName = serverNameInput.getText();
 		Path path = defaultServerDirectory.resolve(serverName.trim());
-		serverDirectoryInput.setPromptText(path.toString());
+		serverDirectoryInput.setPromptText(path.toAbsolutePath().toString());
 	}
 
 	public String getServerName() {
@@ -68,7 +68,7 @@ public class CreateDialogController implements Initializable {
 	}
 
 	public Path getServerDirectory() {
-		return Paths.get(Utils.getValueWithDefault(serverDirectoryInput));
+		return Paths.get(Utils.getValueWithDefault(serverDirectoryInput)).toAbsolutePath();
 	}
 
 	@Override
@@ -91,11 +91,13 @@ public class CreateDialogController implements Initializable {
 
 		Button acceptButton = (Button) dialog.getDialogPane().lookupButton(acceptButtonType);
 		acceptButton.addEventFilter(ActionEvent.ACTION, event -> {
-			String userInput = serverDirectoryInput.getText();
-			String defaultInput = serverDirectoryInput.getPromptText();
-			Path serverDirectory = Paths.get(!StringUtils.isEmpty(userInput) ? userInput : defaultInput);
+			if (StringUtils.isEmpty(getServerName())) {
+				validationMessage.setText("Server Name is a required field.");
+				event.consume();
+			}
 
-			boolean duplicateDirectory = serverConfigs.stream().map(s -> s.getServerDirectory())
+			Path serverDirectory = getServerDirectory();
+			boolean duplicateDirectory = serverConfigs.stream().map(serverConfig -> serverConfig.getServerDirectory())
 					.anyMatch(existingDirectory -> Objects.equals(existingDirectory, serverDirectory));
 			if (duplicateDirectory) {
 				validationMessage.setText("That directory is already in use.");

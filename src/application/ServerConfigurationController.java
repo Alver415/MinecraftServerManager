@@ -1,12 +1,13 @@
 package application;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
 
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -14,14 +15,15 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import model.ServerConfigurationModel;
+import model.ServerConfig;
 
 public class ServerConfigurationController {
 
 	private static final String SERVER_PROPERTIES_COMMENT = "Minecraft server properties";
-	private static final Properties SERVER_PROPERTIES_DEFAULT = PropertyUtils.loadProperties(new File("server.properties.default"));
+	private static final Properties SERVER_PROPERTIES_DEFAULT = Utils
+			.loadProperties(Paths.get("server.properties.default"));
 
-	private ServerConfigurationModel model;
+	private ServerConfig model;
 
 	@FXML
 	private Stage stage;
@@ -42,8 +44,8 @@ public class ServerConfigurationController {
 	private GridPane serverPropertiesPane;
 
 	public void submit() {
-		File serverDirectory = new File(serverDirectoryInput.getText());
-		File minecraftServerJar = new File(minecraftServerJarInput.getText());
+		Path serverDirectory = Paths.get(serverDirectoryInput.getText());
+		Path minecraftServerJar = Paths.get(minecraftServerJarInput.getText());
 		String maximumMemory = maximumMemoryInput.getText();
 		String initialMemory = initialMemoryInput.getText();
 		Properties serverProperties = new Properties(SERVER_PROPERTIES_DEFAULT);
@@ -53,7 +55,9 @@ public class ServerConfigurationController {
 			if (node instanceof TextField) {
 				TextField textField = (TextField) node;
 				String key = textField.getId();
-				String value = textField.getText() != null && !textField.getText().isEmpty() ? textField.getText() : textField.getPromptText();
+				String userValue = textField.getText();
+				String defaultValue = SERVER_PROPERTIES_DEFAULT.getProperty(key);
+				String value = !StringUtils.isEmpty(userValue) ? userValue : defaultValue;
 				serverProperties.setProperty(key, value);
 			}
 		}
@@ -63,9 +67,9 @@ public class ServerConfigurationController {
 		model.setMaximumMemory(maximumMemory);
 		model.setInitialMemory(initialMemory);
 		model.setServerProperties(serverProperties);
-		
-		File serverPropertiesFile = model.getServerPropertiesFile();
-		PropertyUtils.storeProperties(serverProperties, serverPropertiesFile, SERVER_PROPERTIES_COMMENT);
+
+		Path serverPropertiesPath = Paths.get(serverDirectory + "/server.properties");
+		Utils.storeProperties(serverProperties, serverPropertiesPath, SERVER_PROPERTIES_COMMENT);
 
 		stage.close();
 	}
@@ -74,15 +78,15 @@ public class ServerConfigurationController {
 		stage.close();
 	}
 
-	public void setModel(ServerConfigurationModel model) {
+	public void setModel(ServerConfig model) {
 		this.model = model;
-		String serverDirectory = model.getServerDirectory().getAbsolutePath();
-		String minecraftServerJar = model.getMinecraftServerJar().getAbsolutePath();
+		String serverDirectory = model.getServerDirectory().toString();
+		String minecraftServerJar = model.getMinecraftServerJar().toString();
 		String maximumMemory = model.getMaximumMemory();
 		String initialMemory = model.getInitialMemory();
 
-		File serverPropertiesFile = new File(model.getServerDirectory().getPath() + "/server.properties");
-		Properties serverProperties = PropertyUtils.loadProperties(serverPropertiesFile);
+		Path serverPropertiesPath = Paths.get(model.getServerDirectory() + "/server.properties");
+		Properties serverProperties = Utils.loadProperties(serverPropertiesPath);
 
 		serverDirectoryInput.setText(serverDirectory);
 		minecraftServerJarInput.setText(minecraftServerJar);
