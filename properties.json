@@ -1,0 +1,503 @@
+[
+	{
+		"key": "server-ip",
+		"name": "SERVER_IP",
+		"type": "java.lang.String"
+	},
+	{
+		"key": "server-port",
+		"name": "SERVERPORT",
+		"type": "java.lang.Integer",
+		"defaultValue": "25565",
+		"domain": {
+			"class": "IntegerDomain",
+			"type": "java.lang.Integer",
+			"required": true,
+			"min": 1,
+			"max": 65534
+		}
+	},
+	{
+		"key": "query.port",
+		"name": "QUERY_PORT",
+		"type": "java.lang.Integer",
+		"defaultValue": "25565",
+		"domain": {
+			"class": "IntegerDomain",
+			"type": "java.lang.Integer",
+			"required": true,
+			"min": 1,
+			"max": 25565
+		}
+	},
+	{
+		"key": "rcon.port",
+		"name": "RCON_PORT",
+		"type": "java.lang.Integer",
+		"defaultValue": "25575",
+		"domain": {
+			"class": "IntegerDomain",
+			"type": "java.lang.Integer",
+			"min": 1,
+			"max": 25565
+		}
+	},
+	{
+		"key": "rcon.password",
+		"name": "RCON_PASSWORD",
+		"type": "java.lang.String"
+	},
+	{
+		"key": "difficulty",
+		"name": "DIFFICULTY",
+		"type": "java.lang.String",
+		"defaultValue": "easy",
+		"domain": {
+			"class": "StringDomain",
+			"type": "java.lang.String",
+			"required": true,
+			"options": [
+				"peaceful",
+				"easy",
+				"medium",
+				"hard"
+			]
+		}
+	},
+	{
+		"key": "hardcore",
+		"name": "HARDCORE",
+		"type": "java.lang.Boolean",
+		"defaultValue": false
+	},
+	{
+		"key": "gamemode",
+		"name": "GAMEMODE",
+		"type": "java.lang.String",
+		"defaultValue": "survival",
+		"domain": {
+			"class": "StringDomain",
+			"type": "java.lang.String",
+			"required": true,
+			"options": [
+				"survival",
+				"creative",
+				"adventure",
+				"spectator"
+			]
+		}
+	},
+	{
+		"key": "force-gamemode",
+		"name": "FORCE_GAMEMODE",
+		"type": "java.lang.Boolean",
+		"defaultValue": false,
+		"domain": null
+	},
+	{
+		"key": "pvp",
+		"name": "PVP",
+		"type": "java.lang.Boolean",
+		"defaultValue": true,
+		"domain": null
+	},
+	{
+		"key": "allow-flight",
+		"name": "ALLOW_FLIGHT",
+		"type": "java.lang.Boolean",
+		"defaultValue": false,
+		"domain": null
+	},
+	{
+		"key": "allow-nether",
+		"name": "ALLOW_NETHER",
+		"type": "java.lang.Boolean",
+		"defaultValue": true,
+		"domain": null
+	},
+	{
+		"key": "spawn-animals",
+		"name": "SPAWN_ANIMALS",
+		"type": "java.lang.Boolean",
+		"defaultValue": true,
+		"domain": null
+	},
+	{
+		"key": "spawn-monsters",
+		"name": "SPAWN_MONSTERS",
+		"type": "java.lang.Boolean",
+		"defaultValue": true,
+		"domain": null
+	},
+	{
+		"key": "spawn-npcs",
+		"name": "SPAWN_NPCS",
+		"type": "java.lang.Boolean",
+		"defaultValue": true,
+		"domain": null
+	},
+	{
+		"key": "spawn-protection",
+		"name": "SPAWN_PROTECTION",
+		"type": "java.lang.Integer",
+		"defaultValue": "16",
+		"domain": {
+			"class": "IntegerDomain",
+			"type": "java.lang.Integer",
+			"required": false,
+			"min": null,
+			"max": null
+		}
+	},
+	{
+		"key": "motd",
+		"name": "MOTD",
+		"type": "java.lang.String",
+		"defaultValue": "A Minecraft Server",
+		"domain": {
+			"class": "StringDomain",
+			"type": "java.lang.String",
+			"required": false,
+			"regex": null
+		}
+	},
+	{
+		"key": "level-name",
+		"name": "LEVEL_NAME",
+		"type": "java.lang.String",
+		"defaultValue": "world",
+		"domain": {
+			"class": "StringDomain",
+			"type": "java.lang.String",
+			"required": false,
+			"regex": null
+		}
+	},
+	{
+		"key": "level-seed",
+		"name": "LEVEL_SEED",
+		"type": "java.lang.String",
+		"defaultValue": null,
+		"domain": {
+			"class": "StringDomain",
+			"type": "java.lang.String",
+			"required": false,
+			"regex": null
+		}
+	},
+	{
+		"key": "level-type",
+		"name": "LEVEL_TYPE",
+		"type": "java.lang.String",
+		"defaultValue": "default",
+		"domain": {
+			"class": "StringDomain",
+			"type": "java.lang.String",
+			"required": false,
+			"regex": null
+		}
+	},
+	{
+		"key": "generate-structures",
+		"name": "GENERATE_STRUCTURES",
+		"type": "java.lang.Boolean",
+		"defaultValue": true,
+		"domain": null
+	},
+	{
+		"key": "generator-settings",
+		"name": "GENERATOR_SETTINGS",
+		"type": "java.lang.String",
+		"defaultValue": null,
+		"domain": {
+			"class": "StringDomain",
+			"type": "java.lang.String",
+			"required": false,
+			"regex": null
+		}
+	},
+	{
+		"key": "view-distance",
+		"name": "VIEW_DISTANCE",
+		"type": "java.lang.Integer",
+		"defaultValue": "10",
+		"domain": {
+			"class": "IntegerDomain",
+			"type": "java.lang.Integer",
+			"required": false,
+			"min": null,
+			"max": null
+		}
+	},
+	{
+		"key": "max-build-height",
+		"name": "MAX_BUILD_HEIGHT",
+		"type": "java.lang.Integer",
+		"defaultValue": "256",
+		"domain": {
+			"class": "IntegerDomain",
+			"type": "java.lang.Integer",
+			"required": false,
+			"min": null,
+			"max": null
+		}
+	},
+	{
+		"key": "max-players",
+		"name": "MAX_PLAYERS",
+		"type": "java.lang.Integer",
+		"defaultValue": "20",
+		"domain": {
+			"class": "IntegerDomain",
+			"type": "java.lang.Integer",
+			"required": false,
+			"min": null,
+			"max": null
+		}
+	},
+	{
+		"key": "max-tick-time",
+		"name": "MAX_TICK_TIME",
+		"type": "java.lang.Integer",
+		"defaultValue": "60000",
+		"domain": {
+			"class": "IntegerDomain",
+			"type": "java.lang.Integer",
+			"required": false,
+			"min": null,
+			"max": null
+		}
+	},
+	{
+		"key": "max-world-size",
+		"name": "MAX_WORLD_SIZE",
+		"type": "java.lang.Integer",
+		"defaultValue": "29999984",
+		"domain": {
+			"class": "IntegerDomain",
+			"type": "java.lang.Integer",
+			"required": false,
+			"min": null,
+			"max": null
+		}
+	},
+	{
+		"key": "white-list",
+		"name": "WHITE_LIST",
+		"type": "java.lang.Boolean",
+		"defaultValue": false,
+		"domain": null
+	},
+	{
+		"key": "enforce-whitelist",
+		"name": "ENFORCE_WHITELIST",
+		"type": "java.lang.Boolean",
+		"defaultValue": false,
+		"domain": null
+	},
+	{
+		"key": "resource-pack",
+		"name": "RESOURCE_PACK",
+		"type": "java.lang.String",
+		"defaultValue": null,
+		"domain": {
+			"class": "StringDomain",
+			"type": "java.lang.String",
+			"required": false,
+			"regex": null
+		}
+	},
+	{
+		"key": "resource-pack-sha1",
+		"name": "RESOURCE_PACK_SHA1",
+		"type": "java.lang.String",
+		"defaultValue": null,
+		"domain": {
+			"class": "StringDomain",
+			"type": "java.lang.String",
+			"required": false,
+			"regex": null
+		}
+	},
+	{
+		"key": "require-resource-pack",
+		"name": "REQUIRE_RESOURCE_PACK",
+		"type": "java.lang.Boolean",
+		"defaultValue": false,
+		"domain": null
+	},
+	{
+		"key": "broadcast-console-to-ops",
+		"name": "BROADCAST_CONSOLE_TO_OPS",
+		"type": "java.lang.Boolean",
+		"defaultValue": true,
+		"domain": null
+	},
+	{
+		"key": "broadcast-rcon-to-ops",
+		"name": "BROADCAST_RCON_TO_OPS",
+		"type": "java.lang.Boolean",
+		"defaultValue": true,
+		"domain": null
+	},
+	{
+		"key": "enable-command-block",
+		"name": "ENABLE_COMMAND_BLOCK",
+		"type": "java.lang.Boolean",
+		"defaultValue": false,
+		"domain": null
+	},
+	{
+		"key": "enable-jmx-monitoring",
+		"name": "ENABLE_JMX_MONITORING",
+		"type": "java.lang.Boolean",
+		"defaultValue": false,
+		"domain": null
+	},
+	{
+		"key": "enable-rcon",
+		"name": "ENABLE_RCON",
+		"type": "java.lang.Boolean",
+		"defaultValue": false,
+		"domain": null
+	},
+	{
+		"key": "enable-status",
+		"name": "ENABLE_STATUS",
+		"type": "java.lang.Boolean",
+		"defaultValue": true,
+		"domain": null
+	},
+	{
+		"key": "enable-query",
+		"name": "ENABLE_QUERY",
+		"type": "java.lang.Boolean",
+		"defaultValue": false,
+		"domain": null
+	},
+	{
+		"key": "sync-chunk-writes",
+		"name": "SYNC_CHUNK_WRITES",
+		"type": "java.lang.Boolean",
+		"defaultValue": true,
+		"domain": null
+	},
+	{
+		"key": "entity-broadcast-range-percentage",
+		"name": "ENTITY_BROADCAST_RANGE_PERCENTAGE",
+		"type": "java.lang.Integer",
+		"defaultValue": "100",
+		"domain": {
+			"class": "IntegerDomain",
+			"type": "java.lang.Integer",
+			"required": false,
+			"min": null,
+			"max": null
+		}
+	},
+	{
+		"key": "function-permission-level",
+		"name": "FUNCTION_PERMISSION_LEVEL",
+		"type": "java.lang.Integer",
+		"defaultValue": "2",
+		"domain": {
+			"class": "IntegerDomain",
+			"type": "java.lang.Integer",
+			"required": false,
+			"min": null,
+			"max": null
+		}
+	},
+	{
+		"key": "network-compression-threshold",
+		"name": "NETWORK_COMPRESSION_THRESHOLD",
+		"type": "java.lang.Integer",
+		"defaultValue": "256",
+		"domain": {
+			"class": "IntegerDomain",
+			"type": "java.lang.Integer",
+			"required": false,
+			"min": null,
+			"max": null
+		}
+	},
+	{
+		"key": "online-mode",
+		"name": "ONLINE_MODE",
+		"type": "java.lang.Boolean",
+		"defaultValue": true,
+		"domain": null
+	},
+	{
+		"key": "op-permission-level",
+		"name": "OP_PERMISSION_LEVEL",
+		"type": "java.lang.Integer",
+		"defaultValue": "4",
+		"domain": {
+			"class": "IntegerDomain",
+			"type": "java.lang.Integer",
+			"required": false,
+			"min": null,
+			"max": null
+		}
+	},
+	{
+		"key": "player-idle-timeout",
+		"name": "PLAYER_IDLE_TIMEOUT",
+		"type": "java.lang.Integer",
+		"defaultValue": "0",
+		"domain": {
+			"class": "IntegerDomain",
+			"type": "java.lang.Integer",
+			"required": false,
+			"min": null,
+			"max": null
+		}
+	},
+	{
+		"key": "prevent-proxy-connections",
+		"name": "PREVENT_PROXY_CONNECTIONS",
+		"type": "java.lang.Boolean",
+		"defaultValue": false,
+		"domain": null
+	},
+	{
+		"key": "rate-limit",
+		"name": "RATE_LIMIT",
+		"type": "java.lang.Integer",
+		"defaultValue": "0",
+		"domain": {
+			"class": "IntegerDomain",
+			"type": "java.lang.Integer",
+			"required": false,
+			"min": null,
+			"max": null
+		}
+	},
+	{
+		"key": "snooper-enabled",
+		"name": "SNOOPER_ENABLED",
+		"type": "java.lang.Boolean",
+		"defaultValue": true,
+		"domain": null
+	},
+	{
+		"key": "text-filtering-config",
+		"name": "TEXT_FILTERING_CONFIG",
+		"type": "java.lang.String",
+		"defaultValue": null,
+		"domain": {
+			"class": "StringDomain",
+			"type": "java.lang.String",
+			"required": false,
+			"regex": null
+		}
+	},
+	{
+		"key": "use-native-transport",
+		"name": "USE_NATIVE_TRANSPORT",
+		"type": "java.lang.Boolean",
+		"defaultValue": true,
+		"domain": null
+	}
+]

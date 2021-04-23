@@ -55,6 +55,7 @@ public class ServerPageController implements Initializable {
 	@FXML
 	private TextField input;
 
+
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
 		updateUI();
@@ -71,7 +72,7 @@ public class ServerPageController implements Initializable {
 			Stage stage = loader.load();
 			ServerConfigurationController controller = loader.getController();
 			stage.show();
-			controller.setModel(serverConfig);
+			controller.setServerConfig(serverConfig);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

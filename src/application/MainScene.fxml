@@ -52,20 +52,23 @@
 					<menus>
 						<Menu text="File">
 							<items>
-								<MenuItem onAction="#createServer" text="Create Server" />
+								<MenuItem onAction="#createServer" text="Create" />
+								<MenuItem onAction="#importServer" text="Import" />
+								<MenuItem onAction="#deleteServer" text="Delete" />
 							</items>
 						</Menu>
 						<Menu text="Edit">
+							<items>
+								<MenuItem onAction="#openPropertiesDialog" text="Server Properties" />
+							</items>
 						</Menu>
 						<Menu text="Options">
 							<items>
-								<MenuItem onAction="#openPreferencesDialog"
-									text="Preferences" />
+								<MenuItem onAction="#openPreferencesDialog" text="Preferences" />
 								<MenuItem text="About 'Minecraft Server Manager'" />
 								<CustomMenuItem mnemonicParsing="false">
 									<content>
-										<ToggleButton fx:id="darkModeToggle"
-											mnemonicParsing="false" text="Dark Mode" />
+										<ToggleButton fx:id="darkModeToggle" mnemonicParsing="false" text="Dark Mode" />
 									</content>
 								</CustomMenuItem>
 							</items>

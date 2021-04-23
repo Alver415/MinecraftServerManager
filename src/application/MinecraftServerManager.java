@@ -26,7 +26,7 @@ public class MinecraftServerManager extends Application {
 		primaryStage.setTitle("JavaFX Application");
 		primaryStage.show();
 	}
-
+	
 	private void exit() {
 		Platform.exit();
 		System.exit(0);

@@ -1,5 +1,6 @@
 package application;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map.Entry;
@@ -11,8 +12,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import model.ServerConfig;
@@ -20,10 +23,18 @@ import model.ServerConfig;
 public class ServerConfigurationController {
 
 	private static final String SERVER_PROPERTIES_COMMENT = "Minecraft server properties";
-	private static final Properties SERVER_PROPERTIES_DEFAULT = Utils
-			.loadProperties(Paths.get("server.properties.default"));
+	private static final Properties SERVER_PROPERTIES_DEFAULT = initializeDefaultProperties();
 
-	private ServerConfig model;
+	private static Properties initializeDefaultProperties() {
+		try {
+			return Utils.loadProperties(Paths.get("server.properties.default"));
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	private ServerConfig serverConfig;
 
 	@FXML
 	private Stage stage;
@@ -62,11 +73,11 @@ public class ServerConfigurationController {
 			}
 		}
 
-		model.setServerDirectory(serverDirectory);
-		model.setMinecraftServerJar(minecraftServerJar);
-		model.setMaximumMemory(maximumMemory);
-		model.setInitialMemory(initialMemory);
-		model.setServerProperties(serverProperties);
+		serverConfig.setServerDirectory(serverDirectory);
+		serverConfig.setMinecraftServerJar(minecraftServerJar);
+		serverConfig.setMaximumMemory(maximumMemory);
+		serverConfig.setInitialMemory(initialMemory);
+		serverConfig.setServerProperties(serverProperties);
 
 		Path serverPropertiesPath = Paths.get(serverDirectory + "/server.properties");
 		Utils.storeProperties(serverProperties, serverPropertiesPath, SERVER_PROPERTIES_COMMENT);
@@ -78,15 +89,22 @@ public class ServerConfigurationController {
 		stage.close();
 	}
 
-	public void setModel(ServerConfig model) {
-		this.model = model;
-		String serverDirectory = model.getServerDirectory().toString();
-		String minecraftServerJar = model.getMinecraftServerJar().toString();
-		String maximumMemory = model.getMaximumMemory();
-		String initialMemory = model.getInitialMemory();
+	public void setServerConfig(ServerConfig serverConfig) {
+		this.serverConfig = serverConfig;
+		String serverDirectory = serverConfig.getServerDirectory().toString();
+		String minecraftServerJar = serverConfig.getMinecraftServerJar().toString();
+		String maximumMemory = serverConfig.getMaximumMemory();
+		String initialMemory = serverConfig.getInitialMemory();
 
-		Path serverPropertiesPath = Paths.get(model.getServerDirectory() + "/server.properties");
-		Properties serverProperties = Utils.loadProperties(serverPropertiesPath);
+		Path serverPropertiesPath = Paths.get(serverConfig.getServerDirectory() + "/server.properties");
+		Properties serverProperties;
+		try {
+			serverProperties = Utils.loadProperties(serverPropertiesPath);
+		} catch (IOException e) {
+			e.printStackTrace();
+			new Alert(AlertType.ERROR, "Error when loading 'server.properties'. Using defaults.");
+			serverProperties = new Properties(SERVER_PROPERTIES_DEFAULT);
+		}
 
 		serverDirectoryInput.setText(serverDirectory);
 		minecraftServerJarInput.setText(minecraftServerJar);

@@ -37,9 +37,12 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ButtonType?>
 <?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.TextFlow?>
 <?import javafx.scene.text.Text?>
+
+<?import org.alver415.javafx.scene.control.TextFieldForm?>
 
 
 <Dialog xmlns="http://javafx.com/javafx/16"
@@ -51,17 +54,23 @@
 		<DialogPane>
 			<content>
 				<VBox spacing="2">
-					<children>
-						<TextField fx:id="serverNameInput" promptText="Server Name"	text="Minecraft Server" />
-						<TextField fx:id="serverDirectoryInput" promptText="Server Directory" />
-						<Text fx:id="validationMessage" fill="RED" text="" />
-						<Text text="By clicking 'Accept' you are indicating your agreement to Mojang's EULA." />
-						<Hyperlink fx:id="eulaHyperlink" text="https://account.mojang.com/documents/minecraft_eula" />
-					</children>
+					<TextFieldForm alignment="center" hgap="5" vgap="5">
+						<columnConstraints>
+					        <ColumnConstraints halignment="RIGHT" />
+					        <ColumnConstraints hgrow="ALWAYS"/>
+					    </columnConstraints>
+					    <textFields>
+							<TextField fx:id="serverNameInput" TextFieldForm.label="Server Name" text="Minecraft Server" />
+							<TextField fx:id="serverDirectoryInput" TextFieldForm.label="Server Directory" />
+						</textFields>
+					</TextFieldForm>
+					<Text fx:id="validationMessage" fill="RED" text="" />
+					<Text text="By clicking 'Accept' you are indicating your agreement to Mojang's EULA." />
+					<Hyperlink fx:id="eulaHyperlink" text="https://account.mojang.com/documents/minecraft_eula" />
 				</VBox>
 			</content>
 			<buttonTypes>
-				<ButtonType fx:id="acceptButtonType" fx:constant="OK" />
+				<ButtonType fx:id="acceptButtonType" text="Accept" buttonData="OK_DONE"/>
 				<ButtonType fx:constant="CLOSE" />
 			</buttonTypes>
 		</DialogPane>

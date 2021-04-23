@@ -37,9 +37,12 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ButtonType?>
 <?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.TextFlow?>
 <?import javafx.scene.text.Text?>
+
+<?import org.alver415.javafx.scene.control.TextFieldForm?>
 
 
 <Dialog xmlns="http://javafx.com/javafx/16"
@@ -50,13 +53,19 @@
 		<DialogPane>
 			<content>
 				<VBox spacing="2">
-					<children>
-						<TextField fx:id="defaultServerDirectoryInput" />
-						<TextField fx:id="defaultMinecraftJarInput" />
-						<TextField fx:id="defaultMaximumMemoryInput" />
-						<TextField fx:id="defaultInitialMemoryInput" />
-						<Text fx:id="validationMessage" fill="RED" text="" />
-					</children>
+					<TextFieldForm alignment="center" hgap="5" vgap="5">
+						<columnConstraints>
+					        <ColumnConstraints halignment="RIGHT" />
+					        <ColumnConstraints hgrow="ALWAYS"/>
+					    </columnConstraints>
+					    <textFields>
+							<TextField fx:id="defaultServerDirectoryInput" TextFieldForm.label="Default Server Directory" />
+							<TextField fx:id="defaultMinecraftJarInput" TextFieldForm.label="Default Minecraft JAR" />
+							<TextField fx:id="defaultMaximumMemoryInput" TextFieldForm.label="Default Maximum Memory" />
+							<TextField fx:id="defaultInitialMemoryInput" TextFieldForm.label="Default Initial Memory" />
+						</textFields>
+					</TextFieldForm>
+					<Text fx:id="validationMessage" fill="RED" text="" />
 				</VBox>
 			</content>
 			<buttonTypes>
