@@ -1,61 +1,61 @@
 [
 	{
 		"key": "server-ip",
-		"name": "SERVER_IP",
+		"name": "Server IP",
 		"type": "java.lang.String"
 	},
 	{
 		"key": "server-port",
-		"name": "SERVERPORT",
+		"name": "Server Port",
 		"type": "java.lang.Integer",
-		"defaultValue": "25565",
 		"domain": {
 			"class": "IntegerDomain",
 			"type": "java.lang.Integer",
 			"required": true,
+			"defaultValue": "25565",
 			"min": 1,
 			"max": 65534
 		}
 	},
 	{
 		"key": "query.port",
-		"name": "QUERY_PORT",
+		"name": "Query Port",
 		"type": "java.lang.Integer",
-		"defaultValue": "25565",
 		"domain": {
 			"class": "IntegerDomain",
 			"type": "java.lang.Integer",
 			"required": true,
+			"defaultValue": "25565",
 			"min": 1,
-			"max": 25565
+			"max": 65535
 		}
 	},
 	{
 		"key": "rcon.port",
-		"name": "RCON_PORT",
+		"name": "RCON Port",
 		"type": "java.lang.Integer",
-		"defaultValue": "25575",
 		"domain": {
 			"class": "IntegerDomain",
 			"type": "java.lang.Integer",
+			"defaultValue": "25575",
 			"min": 1,
-			"max": 25565
+			"max": 65535
 		}
 	},
 	{
 		"key": "rcon.password",
-		"name": "RCON_PASSWORD",
+		"name": "RCON Password",
 		"type": "java.lang.String"
 	},
 	{
 		"key": "difficulty",
-		"name": "DIFFICULTY",
+		"name": "Difficulty",
 		"type": "java.lang.String",
-		"defaultValue": "easy",
 		"domain": {
 			"class": "StringDomain",
 			"type": "java.lang.String",
 			"required": true,
+			"defaultValue": "easy",
 			"options": [
 				"peaceful",
 				"easy",
@@ -66,19 +66,22 @@
 	},
 	{
 		"key": "hardcore",
-		"name": "HARDCORE",
+		"name": "Hardcore",
 		"type": "java.lang.Boolean",
-		"defaultValue": false
+		"domain": {
+			"class": "BooleanDomain",
+			"type": "java.lang.Boolean"
+		}
 	},
 	{
 		"key": "gamemode",
-		"name": "GAMEMODE",
+		"name": "Gamemode",
 		"type": "java.lang.String",
-		"defaultValue": "survival",
 		"domain": {
 			"class": "StringDomain",
 			"type": "java.lang.String",
 			"required": true,
+			"defaultValue": "survival",
 			"options": [
 				"survival",
 				"creative",
@@ -89,415 +92,391 @@
 	},
 	{
 		"key": "force-gamemode",
-		"name": "FORCE_GAMEMODE",
+		"name": "Force Gamemode",
 		"type": "java.lang.Boolean",
-		"defaultValue": false,
-		"domain": null
+		"domain": {
+			"class": "BooleanDomain",
+			"type": "java.lang.Boolean"
+		}
 	},
 	{
 		"key": "pvp",
-		"name": "PVP",
+		"name": "PvP",
 		"type": "java.lang.Boolean",
-		"defaultValue": true,
-		"domain": null
+		"domain": {
+			"class": "BooleanDomain",
+			"type": "java.lang.Boolean"
+		}
 	},
 	{
 		"key": "allow-flight",
-		"name": "ALLOW_FLIGHT",
+		"name": "Allow Flight",
 		"type": "java.lang.Boolean",
-		"defaultValue": false,
-		"domain": null
+		"domain": {
+			"class": "BooleanDomain",
+			"type": "java.lang.Boolean"
+		}
 	},
 	{
 		"key": "allow-nether",
-		"name": "ALLOW_NETHER",
+		"name": "Allow Nether",
 		"type": "java.lang.Boolean",
-		"defaultValue": true,
-		"domain": null
+		"domain": {
+			"class": "BooleanDomain",
+			"type": "java.lang.Boolean"
+		}
 	},
 	{
 		"key": "spawn-animals",
-		"name": "SPAWN_ANIMALS",
+		"name": "Spawn Animals",
 		"type": "java.lang.Boolean",
-		"defaultValue": true,
-		"domain": null
+		"domain": {
+			"class": "BooleanDomain",
+			"type": "java.lang.Boolean"
+		}
 	},
 	{
 		"key": "spawn-monsters",
-		"name": "SPAWN_MONSTERS",
+		"name": "Spawn Monsters",
 		"type": "java.lang.Boolean",
-		"defaultValue": true,
-		"domain": null
+		"domain": {
+			"class": "BooleanDomain",
+			"type": "java.lang.Boolean"
+		}
 	},
 	{
 		"key": "spawn-npcs",
-		"name": "SPAWN_NPCS",
+		"name": "Spawn NPCs",
 		"type": "java.lang.Boolean",
-		"defaultValue": true,
-		"domain": null
+		"domain": {
+			"class": "BooleanDomain",
+			"type": "java.lang.Boolean"
+		}
 	},
 	{
 		"key": "spawn-protection",
-		"name": "SPAWN_PROTECTION",
+		"name": "Spawn Protection",
 		"type": "java.lang.Integer",
-		"defaultValue": "16",
 		"domain": {
 			"class": "IntegerDomain",
 			"type": "java.lang.Integer",
-			"required": false,
-			"min": null,
-			"max": null
+			"defaultValue": "16"
 		}
 	},
 	{
 		"key": "motd",
-		"name": "MOTD",
+		"name": "Message of the Day",
 		"type": "java.lang.String",
-		"defaultValue": "A Minecraft Server",
 		"domain": {
 			"class": "StringDomain",
 			"type": "java.lang.String",
-			"required": false,
-			"regex": null
+			"defaultValue": "A Minecraft Server"
 		}
 	},
 	{
 		"key": "level-name",
-		"name": "LEVEL_NAME",
+		"name": "Level Name",
 		"type": "java.lang.String",
-		"defaultValue": "world",
 		"domain": {
 			"class": "StringDomain",
 			"type": "java.lang.String",
-			"required": false,
-			"regex": null
+			"defaultValue": "world"
 		}
 	},
 	{
 		"key": "level-seed",
-		"name": "LEVEL_SEED",
-		"type": "java.lang.String",
-		"defaultValue": null,
-		"domain": {
-			"class": "StringDomain",
-			"type": "java.lang.String",
-			"required": false,
-			"regex": null
-		}
+		"name": "Level Seed",
+		"type": "java.lang.String"
 	},
 	{
 		"key": "level-type",
-		"name": "LEVEL_TYPE",
+		"name": "Level Type",
 		"type": "java.lang.String",
-		"defaultValue": "default",
 		"domain": {
 			"class": "StringDomain",
 			"type": "java.lang.String",
-			"required": false,
-			"regex": null
+			"defaultValue": "default"
 		}
 	},
 	{
 		"key": "generate-structures",
-		"name": "GENERATE_STRUCTURES",
+		"name": "Generate Structures",
 		"type": "java.lang.Boolean",
-		"defaultValue": true,
-		"domain": null
-	},
-	{
-		"key": "generator-settings",
-		"name": "GENERATOR_SETTINGS",
-		"type": "java.lang.String",
-		"defaultValue": null,
 		"domain": {
-			"class": "StringDomain",
-			"type": "java.lang.String",
-			"required": false,
-			"regex": null
+			"class": "BooleanDomain",
+			"type": "java.lang.Boolean"
 		}
 	},
 	{
+		"key": "generator-settings",
+		"name": "Generator Settings",
+		"type": "java.lang.String"
+	},
+	{
 		"key": "view-distance",
-		"name": "VIEW_DISTANCE",
+		"name": "View Distance",
 		"type": "java.lang.Integer",
-		"defaultValue": "10",
 		"domain": {
 			"class": "IntegerDomain",
 			"type": "java.lang.Integer",
-			"required": false,
-			"min": null,
-			"max": null
+			"defaultValue": "10"
 		}
 	},
 	{
 		"key": "max-build-height",
-		"name": "MAX_BUILD_HEIGHT",
+		"name": "Max Build Height",
 		"type": "java.lang.Integer",
-		"defaultValue": "256",
 		"domain": {
 			"class": "IntegerDomain",
 			"type": "java.lang.Integer",
-			"required": false,
+			"defaultValue": "256",
 			"min": null,
-			"max": null
+			"max": 256
 		}
 	},
 	{
 		"key": "max-players",
-		"name": "MAX_PLAYERS",
+		"name": "Max Players",
 		"type": "java.lang.Integer",
-		"defaultValue": "20",
 		"domain": {
 			"class": "IntegerDomain",
 			"type": "java.lang.Integer",
-			"required": false,
-			"min": null,
-			"max": null
+			"defaultValue": "20",
+			"min": 0,
+			"max": 2147483647
 		}
 	},
 	{
 		"key": "max-tick-time",
-		"name": "MAX_TICK_TIME",
+		"name": "Max Tick Time",
 		"type": "java.lang.Integer",
-		"defaultValue": "60000",
 		"domain": {
 			"class": "IntegerDomain",
 			"type": "java.lang.Integer",
-			"required": false,
-			"min": null,
-			"max": null
+			"defaultValue": "60000",
+			"min": -1
 		}
 	},
 	{
 		"key": "max-world-size",
-		"name": "MAX_WORLD_SIZE",
+		"name": "Max World Size",
 		"type": "java.lang.Integer",
-		"defaultValue": "29999984",
 		"domain": {
 			"class": "IntegerDomain",
 			"type": "java.lang.Integer",
-			"required": false,
-			"min": null,
-			"max": null
+			"defaultValue": "29999984",
+			"min": 1,
+			"max": 29999984
 		}
 	},
 	{
 		"key": "white-list",
-		"name": "WHITE_LIST",
+		"name": "White List",
 		"type": "java.lang.Boolean",
-		"defaultValue": false,
-		"domain": null
+		"domain": {
+			"class": "BooleanDomain",
+			"type": "java.lang.Boolean"
+		}
 	},
 	{
 		"key": "enforce-whitelist",
-		"name": "ENFORCE_WHITELIST",
+		"name": "Enforce White List",
 		"type": "java.lang.Boolean",
-		"defaultValue": false,
-		"domain": null
+		"domain": {
+			"class": "BooleanDomain",
+			"type": "java.lang.Boolean"
+		}
 	},
 	{
 		"key": "resource-pack",
-		"name": "RESOURCE_PACK",
-		"type": "java.lang.String",
-		"defaultValue": null,
-		"domain": {
-			"class": "StringDomain",
-			"type": "java.lang.String",
-			"required": false,
-			"regex": null
-		}
+		"name": "Resource Pack",
+		"type": "java.lang.String"
 	},
 	{
 		"key": "resource-pack-sha1",
-		"name": "RESOURCE_PACK_SHA1",
-		"type": "java.lang.String",
-		"defaultValue": null,
-		"domain": {
-			"class": "StringDomain",
-			"type": "java.lang.String",
-			"required": false,
-			"regex": null
-		}
+		"name": "Resource Pack SHA-1",
+		"type": "java.lang.String"
 	},
 	{
 		"key": "require-resource-pack",
-		"name": "REQUIRE_RESOURCE_PACK",
+		"name": "Required Resource Pack",
 		"type": "java.lang.Boolean",
-		"defaultValue": false,
-		"domain": null
+		"domain": {
+			"class": "BooleanDomain",
+			"type": "java.lang.Boolean"
+		}
 	},
 	{
 		"key": "broadcast-console-to-ops",
-		"name": "BROADCAST_CONSOLE_TO_OPS",
+		"name": "Broadcast Consol to Operators",
 		"type": "java.lang.Boolean",
-		"defaultValue": true,
-		"domain": null
+		"domain": {
+			"class": "BooleanDomain",
+			"type": "java.lang.Boolean"
+		}
 	},
 	{
 		"key": "broadcast-rcon-to-ops",
-		"name": "BROADCAST_RCON_TO_OPS",
+		"name": "Broadcast RCON to Operators",
 		"type": "java.lang.Boolean",
-		"defaultValue": true,
-		"domain": null
+		"domain": {
+			"class": "BooleanDomain",
+			"type": "java.lang.Boolean"
+		}
 	},
 	{
 		"key": "enable-command-block",
-		"name": "ENABLE_COMMAND_BLOCK",
+		"name": "Enable Command Block",
 		"type": "java.lang.Boolean",
-		"defaultValue": false,
-		"domain": null
+		"domain": {
+			"class": "BooleanDomain",
+			"type": "java.lang.Boolean"
+		}
 	},
 	{
 		"key": "enable-jmx-monitoring",
-		"name": "ENABLE_JMX_MONITORING",
+		"name": "Enable JMX Monitoring",
 		"type": "java.lang.Boolean",
-		"defaultValue": false,
-		"domain": null
+		"domain": {
+			"class": "BooleanDomain",
+			"type": "java.lang.Boolean"
+		}
 	},
 	{
 		"key": "enable-rcon",
-		"name": "ENABLE_RCON",
+		"name": "Enable RCON",
 		"type": "java.lang.Boolean",
-		"defaultValue": false,
-		"domain": null
+		"domain": {
+			"class": "BooleanDomain",
+			"type": "java.lang.Boolean"
+		}
 	},
 	{
 		"key": "enable-status",
-		"name": "ENABLE_STATUS",
+		"name": "Enable Status",
 		"type": "java.lang.Boolean",
-		"defaultValue": true,
-		"domain": null
+		"domain": {
+			"class": "BooleanDomain",
+			"type": "java.lang.Boolean"
+		}
 	},
 	{
 		"key": "enable-query",
-		"name": "ENABLE_QUERY",
+		"name": "Enable Query",
 		"type": "java.lang.Boolean",
-		"defaultValue": false,
-		"domain": null
+		"domain": {
+			"class": "BooleanDomain",
+			"type": "java.lang.Boolean"
+		}
 	},
 	{
 		"key": "sync-chunk-writes",
-		"name": "SYNC_CHUNK_WRITES",
+		"name": "Sync Chunch Writes",
 		"type": "java.lang.Boolean",
-		"defaultValue": true,
-		"domain": null
+		"domain": {
+			"class": "BooleanDomain",
+			"type": "java.lang.Boolean"
+		}
 	},
 	{
 		"key": "entity-broadcast-range-percentage",
-		"name": "ENTITY_BROADCAST_RANGE_PERCENTAGE",
+		"name": "Entity Broadcast Range Percentage",
 		"type": "java.lang.Integer",
-		"defaultValue": "100",
 		"domain": {
 			"class": "IntegerDomain",
 			"type": "java.lang.Integer",
-			"required": false,
-			"min": null,
-			"max": null
+			"defaultValue": "100"
 		}
 	},
 	{
 		"key": "function-permission-level",
-		"name": "FUNCTION_PERMISSION_LEVEL",
+		"name": "Function Permission Level",
 		"type": "java.lang.Integer",
-		"defaultValue": "2",
 		"domain": {
 			"class": "IntegerDomain",
 			"type": "java.lang.Integer",
-			"required": false,
-			"min": null,
-			"max": null
+			"defaultValue": "2"
 		}
 	},
 	{
 		"key": "network-compression-threshold",
-		"name": "NETWORK_COMPRESSION_THRESHOLD",
+		"name": "Network Compression Threshold",
 		"type": "java.lang.Integer",
-		"defaultValue": "256",
 		"domain": {
 			"class": "IntegerDomain",
 			"type": "java.lang.Integer",
-			"required": false,
-			"min": null,
-			"max": null
+			"defaultValue": "256"
 		}
 	},
 	{
 		"key": "online-mode",
-		"name": "ONLINE_MODE",
+		"name": "Online Mode",
 		"type": "java.lang.Boolean",
-		"defaultValue": true,
-		"domain": null
+		"domain": {
+			"class": "BooleanDomain",
+			"type": "java.lang.Boolean"
+		}
 	},
 	{
 		"key": "op-permission-level",
-		"name": "OP_PERMISSION_LEVEL",
+		"name": "Operator Permission Level",
 		"type": "java.lang.Integer",
-		"defaultValue": "4",
 		"domain": {
 			"class": "IntegerDomain",
 			"type": "java.lang.Integer",
-			"required": false,
-			"min": null,
-			"max": null
+			"defaultValue": "4"
 		}
 	},
 	{
 		"key": "player-idle-timeout",
-		"name": "PLAYER_IDLE_TIMEOUT",
+		"name": "Player Idle Timeout",
 		"type": "java.lang.Integer",
-		"defaultValue": "0",
 		"domain": {
 			"class": "IntegerDomain",
 			"type": "java.lang.Integer",
-			"required": false,
-			"min": null,
-			"max": null
+			"defaultValue": "0"
 		}
 	},
 	{
 		"key": "prevent-proxy-connections",
-		"name": "PREVENT_PROXY_CONNECTIONS",
+		"name": "Prevent Proxy Connections",
 		"type": "java.lang.Boolean",
-		"defaultValue": false,
-		"domain": null
+		"domain": {
+			"class": "BooleanDomain",
+			"type": "java.lang.Boolean"
+		}
 	},
 	{
 		"key": "rate-limit",
-		"name": "RATE_LIMIT",
+		"name": "Rate Limit",
 		"type": "java.lang.Integer",
-		"defaultValue": "0",
 		"domain": {
 			"class": "IntegerDomain",
 			"type": "java.lang.Integer",
-			"required": false,
-			"min": null,
-			"max": null
+			"defaultValue": "0"
 		}
 	},
 	{
 		"key": "snooper-enabled",
-		"name": "SNOOPER_ENABLED",
+		"name": "Snooper Enabled",
 		"type": "java.lang.Boolean",
-		"defaultValue": true,
-		"domain": null
-	},
-	{
-		"key": "text-filtering-config",
-		"name": "TEXT_FILTERING_CONFIG",
-		"type": "java.lang.String",
-		"defaultValue": null,
 		"domain": {
-			"class": "StringDomain",
-			"type": "java.lang.String",
-			"required": false,
-			"regex": null
+			"class": "BooleanDomain",
+			"type": "java.lang.Boolean"
 		}
 	},
 	{
+		"key": "text-filtering-config",
+		"name": "Text Filtering Config",
+		"type": "java.lang.String"
+	},
+	{
 		"key": "use-native-transport",
-		"name": "USE_NATIVE_TRANSPORT",
+		"name": "Use Native Transport",
 		"type": "java.lang.Boolean",
-		"defaultValue": true,
-		"domain": null
+		"domain": {
+			"class": "BooleanDomain",
+			"type": "java.lang.Boolean"
+		}
 	}
 ]
