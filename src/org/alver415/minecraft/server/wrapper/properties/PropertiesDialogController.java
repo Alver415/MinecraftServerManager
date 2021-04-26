@@ -10,7 +10,8 @@ import org.alver415.javafx.scene.control.input.InputCheckbox;
 import org.alver415.javafx.scene.control.input.InputComboBox;
 import org.alver415.javafx.scene.control.input.InputField;
 import org.alver415.javafx.scene.control.input.InputTextField;
-import org.alver415.javafx.scene.control.input.InputToggle;
+import org.alver415.javafx.scene.control.input.InputToggleButton;
+import org.alver415.minecraft.server.wrapper.Utils;
 import org.alver415.minecraft.server.wrapper.input.ConversionException;
 import org.alver415.minecraft.server.wrapper.input.InvalidValueException;
 import org.alver415.minecraft.server.wrapper.input.Property;
@@ -21,7 +22,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.control.textfield.TextFields;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
 public class PropertiesDialogController {
@@ -30,6 +30,15 @@ public class PropertiesDialogController {
 
 	@FXML
 	private VBox vbox;
+
+	public Properties asProperties() {
+		Properties properties = new Properties();
+		for (Entry<String, InputField<?>> entry : fieldMap.entrySet()) {
+			String value = toString(entry.getValue().getValue());
+			properties.setProperty(entry.getKey(), value);
+		}
+		return properties;
+	}
 
 	public void setProperties(Collection<Property<?>> properties) {
 		for (Property<?> serverProperty : properties) {
@@ -41,9 +50,13 @@ public class PropertiesDialogController {
 	private <T> void setupField(Property<T> serverProperty) {
 		Domain<T> domain = serverProperty.getDomain();
 		if (serverProperty.getType() == Boolean.class) {
-			setupInputCheckBox((Property<Boolean>)serverProperty);
+			setupInputCheckBox((Property<Boolean>) serverProperty);
 		} else if (domain != null && !CollectionUtils.isEmpty(domain.getOptions())) {
-			setupInputComboBox(serverProperty);
+			if (domain.getOptions().size() == 2) {
+				setupInputToggle(serverProperty);
+			} else {
+				setupInputComboBox(serverProperty);
+			}
 		} else {
 			setupInputTextField(serverProperty);
 		}
@@ -71,17 +84,7 @@ public class PropertiesDialogController {
 		vbox.getChildren().add(field);
 	}
 
-	private <T> void validate(Property<T> serverProperty, InputTextField field) {
-		try {
-			String input = getValue(field.getTextField());
-			serverProperty.validate(input);
-			field.getMessage().setText(null);
-		} catch (InvalidValueException | ConversionException e) {
-			field.getMessage().setText(e.getMessage());
-		}
-	}
-
-	private <T> void setupInputCheckBox(Property<Boolean> serverProperty) {
+	private void setupInputCheckBox(Property<Boolean> serverProperty) {
 		String key = serverProperty.getKey();
 		String name = serverProperty.getName();
 		Boolean value = serverProperty.getValue();
@@ -92,18 +95,24 @@ public class PropertiesDialogController {
 		fieldMap.put(key, field);
 		vbox.getChildren().add(field);
 	}
-	private <T> void setupInputToggle(Property<Boolean> serverProperty) {
+
+	private <T> void setupInputToggle(Property<T> serverProperty) {
 		String key = serverProperty.getKey();
 		String name = serverProperty.getName();
-		Boolean value = serverProperty.getValue();
-		Boolean defaultValue = serverProperty.getDefaultValue();
+		T value = serverProperty.getValue();
+		T defaultValue = serverProperty.getDefaultValue();
+		T val = value != null ? value : defaultValue;
 
-		Boolean val = value != null ? value : defaultValue;
-		InputToggle field = new InputToggle(name, val);
+		Domain<T> domain = serverProperty.getDomain();
+		List<T> options = domain.getOptions();
+
+		T unselectedOption = options.get(0);
+		T selectedOption = options.get(1);
+		InputToggleButton<T> field = new InputToggleButton<>(name, unselectedOption, selectedOption, val);
 		fieldMap.put(key, field);
 		vbox.getChildren().add(field);
 	}
-	
+
 	private <T> void setupInputComboBox(Property<T> serverProperty) {
 		String key = serverProperty.getKey();
 		String name = serverProperty.getName();
@@ -118,20 +127,15 @@ public class PropertiesDialogController {
 		vbox.getChildren().add(field);
 	}
 
-	public Properties asProperties() {
-		Properties properties = new Properties();
-		for (Entry<String, InputField<?>> entry : fieldMap.entrySet()) {
-			String value = toString(entry.getValue().getValue());
-			properties.setProperty(entry.getKey(), value);
+	private <T> void validate(Property<T> serverProperty, InputField<?> field) {
+		try {
+			String input = field.getValue().toString();
+			T converted = Utils.convert(input, serverProperty.getType());
+			serverProperty.validate(converted);
+			field.getMessage().setText(null);
+		} catch (InvalidValueException | ConversionException e) {
+			field.getMessage().setText(e.getMessage());
 		}
-		return properties;
-	}
-
-	private String getValue(TextField textField) {
-		String userValue = textField.getText();
-		String defaultValue = textField.getPromptText();
-		String value = userValue != null ? userValue : defaultValue;
-		return toString(value);
 	}
 
 	private String toString(Object value) {

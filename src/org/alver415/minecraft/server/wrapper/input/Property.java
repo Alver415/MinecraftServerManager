@@ -63,9 +63,9 @@ public class Property<T> {
 		return domain == null ? null : domain.getDefaultValue();
 	}
 
-	public void validate(String input) throws InvalidValueException, ConversionException {
+	public void validate(T input) throws InvalidValueException, ConversionException {
 		if (domain != null) {
-			domain.validate(Utils.convert(input, domain.getType()));
+			domain.validate(input);
 		}
 	}
 	

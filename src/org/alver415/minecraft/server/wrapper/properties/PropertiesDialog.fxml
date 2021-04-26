@@ -42,7 +42,7 @@
 		<DialogPane>
 			<content>
 				<ScrollPane prefHeight="400" fitToWidth="true">
-					<VBox fx:id="vbox"></VBox>
+					<VBox fx:id="vbox" />
 				</ScrollPane>
 			</content>
 			<buttonTypes>

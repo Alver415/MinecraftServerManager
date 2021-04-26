@@ -13,21 +13,18 @@ import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
+import org.alver415.minecraft.server.wrapper.Utils;
+import org.alver415.minecraft.server.wrapper.model.ServerConfig;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
-import org.alver415.minecraft.server.wrapper.ServerConfigurationController;
-import org.alver415.minecraft.server.wrapper.Utils;
-import org.alver415.minecraft.server.wrapper.model.ServerConfig;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
-import javafx.stage.Stage;
 
 public class ServerPageController implements Initializable {
 
@@ -64,18 +61,6 @@ public class ServerPageController implements Initializable {
 
 	public void setServerConfig(ServerConfig serverConfig) {
 		this.serverConfig = serverConfig;
-	}
-
-	public void openServerConfiguration() {
-		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("ServerConfiguration.fxml"));
-			Stage stage = loader.load();
-			ServerConfigurationController controller = loader.getController();
-			stage.show();
-			controller.setServerConfig(serverConfig);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	public void start() throws IOException {

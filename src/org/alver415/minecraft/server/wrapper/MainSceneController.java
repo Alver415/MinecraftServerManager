@@ -25,7 +25,6 @@ import org.alver415.minecraft.server.wrapper.create.CreateDialogController;
 import org.alver415.minecraft.server.wrapper.input.ConversionException;
 import org.alver415.minecraft.server.wrapper.input.Property;
 import org.alver415.minecraft.server.wrapper.model.ServerConfig;
-import org.alver415.minecraft.server.wrapper.preferences.PreferencesDialogController;
 import org.alver415.minecraft.server.wrapper.properties.PropertiesDialogController;
 import org.alver415.minecraft.server.wrapper.server.ServerPageController;
 import org.alver415.minecraft.server.wrapper.watcher.PathWatcher;
@@ -436,37 +435,6 @@ public class MainSceneController implements Initializable {
 		Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
 		ServerConfig selectedServer = tabMap.getKey(selectedTab);
 		return selectedServer;
-	}
-
-	public void openPreferencesDialog() {
-		try {
-			FXMLLoader loader = Utils.fxmlLoader(PreferencesDialogController.class);
-			Dialog<ButtonType> dialog = loader.load();
-			PreferencesDialogController controller = loader.getController();
-
-			preferences = Utils.loadProperties(PREFERENCES_PROPERTIES);
-			Path defaultServerDirectory = Paths.get(preferences.getProperty("default.server.directory", ""));
-			Path defaultMinecraftJar = Paths.get(preferences.getProperty("default.minecraft.jar", ""));
-			String maximumMemory = preferences.getProperty("default.maximum.memory");
-			String initialMemory = preferences.getProperty("default.initial.memory");
-			controller.setDefaultServerDirectory(defaultServerDirectory);
-			controller.setDefaultMinecraftJar(defaultMinecraftJar);
-			controller.setDefaultMaximumMemory(maximumMemory);
-			controller.setDefaultInitialMemory(initialMemory);
-
-			dialog.showAndWait().filter(response -> {
-				return Objects.equals(response.getButtonData(), ButtonData.OK_DONE);
-			}).ifPresent(response -> {
-				preferences.setProperty("default.server.directory", controller.getDefaultServerDirectory().toString());
-				preferences.setProperty("default.minecraft.jar", controller.getDefaultMinecraftJar().toString());
-				preferences.setProperty("default.maximum.memory", controller.getDefaultMaximumMemory());
-				preferences.setProperty("default.initial.memory", controller.getDefaultInitialMemory());
-
-				Utils.storeProperties(preferences, PREFERENCES_PROPERTIES);
-			});
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	private static final Comparator<TreeItem<Path>> TREE_ITEM_COMPARATOR = new Comparator<TreeItem<Path>>() {

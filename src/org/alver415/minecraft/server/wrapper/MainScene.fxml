@@ -64,7 +64,6 @@
 						</Menu>
 						<Menu text="Options">
 							<items>
-								<MenuItem onAction="#openPreferencesDialog" text="Preferences" />
 								<MenuItem text="About 'Minecraft Server Manager'" />
 								<CustomMenuItem mnemonicParsing="false">
 									<content>
