@@ -11,22 +11,24 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
+import org.alver415.minecraft.server.wrapper.input.ConversionException;
+import org.alver415.minecraft.server.wrapper.input.domain.IntegerDomain;
+import org.alver415.minecraft.server.wrapper.input.domain.StringDomain;
+import org.alver415.minecraft.server.wrapper.model.Server;
+import org.alver415.minecraft.server.wrapper.properties.ServerProperty;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
-import org.alver415.minecraft.server.wrapper.input.ConversionException;
-import org.alver415.minecraft.server.wrapper.input.Property;
-import org.alver415.minecraft.server.wrapper.input.domain.IntegerDomain;
-import org.alver415.minecraft.server.wrapper.input.domain.StringDomain;
-import org.alver415.minecraft.server.wrapper.model.ServerConfig;
 import javafx.application.Platform;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXMLLoader;
@@ -45,6 +47,7 @@ public class Utils {
 		JSON_MAPPER.registerSubtypes(StringDomain.class, IntegerDomain.class);
 		JSON_WRITER = JSON_MAPPER.writerWithDefaultPrettyPrinter();
 	}
+
 	public static FXMLLoader fxmlLoader(Class<?> clazz) {
 		return fxmlLoader(clazz, null);
 	}
@@ -122,12 +125,12 @@ public class Utils {
 		}
 	}
 
-	public static Collection<ServerConfig> loadServerConfigs() {
-		List<ServerConfig> list = new ArrayList<>();
+	public static Collection<Server> loadServerConfigs() {
+		List<Server> list = new ArrayList<>();
 		try {
 			Path path = Paths.get("servers.json");
 			if (Files.exists(path)) {
-				ServerConfig[] array = JSON_MAPPER.readValue(path.toFile(), ServerConfig[].class);
+				Server[] array = JSON_MAPPER.readValue(path.toFile(), Server[].class);
 				list.addAll(Arrays.asList(array));
 			}
 		} catch (IOException e) {
@@ -136,7 +139,7 @@ public class Utils {
 		return list;
 	}
 
-	public static void saveServerConfigs(Collection<ServerConfig> serverConfig) {
+	public static void saveServerConfigs(Collection<Server> serverConfig) {
 		try {
 			File file = Paths.get("servers.json").toFile();
 			JSON_WRITER.writeValue(file, serverConfig);
@@ -145,21 +148,23 @@ public class Utils {
 		}
 	}
 
-	public static Collection<Property<?>> loadServerProperties() {
-		List<Property<?>> list = new ArrayList<>();
+	public static Map<String, ServerProperty<?>> loadServerProperties() {
+		Map<String, ServerProperty<?>> map = new LinkedHashMap<>();
 		try {
 			Path path = Paths.get("properties.json");
 			if (Files.exists(path)) {
-				Property<?>[] array = JSON_MAPPER.readValue(path.toFile(), Property[].class);
-				list.addAll(Arrays.asList(array));
+				ServerProperty<?>[] array = JSON_MAPPER.readValue(path.toFile(), ServerProperty[].class);
+				for (ServerProperty<?> serverProperty : array) {
+					map.put(serverProperty.getKey(), serverProperty);
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return list;
+		return map;
 	}
 
-	public static void saveServerProperties(Collection<Property<?>> serverProperties) {
+	public static void saveServerProperties(Collection<ServerProperty<?>> serverProperties) {
 		try {
 			File file = Paths.get("properties.json").toFile();
 			JSON_WRITER.writeValue(file, serverProperties);

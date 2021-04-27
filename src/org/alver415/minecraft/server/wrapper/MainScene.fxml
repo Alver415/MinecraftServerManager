@@ -53,7 +53,6 @@
 						<Menu text="File">
 							<items>
 								<MenuItem onAction="#createServer" text="Create" />
-								<MenuItem onAction="#importServer" text="Import" />
 								<MenuItem onAction="#deleteServer" text="Delete" />
 							</items>
 						</Menu>

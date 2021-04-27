@@ -14,7 +14,7 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 import org.alver415.minecraft.server.wrapper.Utils;
-import org.alver415.minecraft.server.wrapper.model.ServerConfig;
+import org.alver415.minecraft.server.wrapper.model.Server;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -34,7 +34,7 @@ public class ServerPageController implements Initializable {
 	private static final String OUT = "[OUT] ";
 	private static final String ERR = "[ERR] ";
 
-	private ServerConfig serverConfig;
+	private Server serverConfig;
 
 	private Process process;
 	private List<String> commandHistory = new ArrayList<>();;
@@ -52,21 +52,20 @@ public class ServerPageController implements Initializable {
 	@FXML
 	private TextField input;
 
-
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
 		updateUI();
 		setupHotkeys();
 	}
 
-	public void setServerConfig(ServerConfig serverConfig) {
+	public void setServerConfig(Server serverConfig) {
 		this.serverConfig = serverConfig;
 	}
 
 	public void start() throws IOException {
-		Path serverDirectory = serverConfig.getServerDirectory();
-		if (!Files.exists(serverDirectory)) {
-			Files.createDirectories(serverDirectory);
+		Path serverDirectory = serverConfig.getDirectory();
+		if (!Files.exists(serverDirectory.toAbsolutePath())) {
+			Files.createDirectories(serverDirectory.toAbsolutePath());
 		}
 
 		List<String> command = buildCommand(serverConfig);
@@ -89,8 +88,8 @@ public class ServerPageController implements Initializable {
 		updateUI();
 	}
 
-	private List<String> buildCommand(ServerConfig model) {
-		Path minecraftServerJar = model.getMinecraftServerJar();
+	private List<String> buildCommand(Server model) {
+		Path minecraftServerJar = model.getMinecraftJar();
 		String xmx = model.getMaximumMemory();
 		String xms = model.getInitialMemory();
 

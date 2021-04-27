@@ -9,25 +9,25 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
 import java.util.Comparator;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import org.alver415.minecraft.server.wrapper.create.CreateDialogController;
+import org.alver415.minecraft.server.wrapper.input.ConversionException;
+import org.alver415.minecraft.server.wrapper.model.Server;
+import org.alver415.minecraft.server.wrapper.properties.PropertiesDialogController;
+import org.alver415.minecraft.server.wrapper.properties.ServerProperty;
+import org.alver415.minecraft.server.wrapper.server.ServerPageController;
+import org.alver415.minecraft.server.wrapper.watcher.PathWatcher;
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.apache.commons.lang3.NotImplementedException;
 
-import org.alver415.minecraft.server.wrapper.create.CreateDialogController;
-import org.alver415.minecraft.server.wrapper.input.ConversionException;
-import org.alver415.minecraft.server.wrapper.input.Property;
-import org.alver415.minecraft.server.wrapper.model.ServerConfig;
-import org.alver415.minecraft.server.wrapper.properties.PropertiesDialogController;
-import org.alver415.minecraft.server.wrapper.server.ServerPageController;
-import org.alver415.minecraft.server.wrapper.watcher.PathWatcher;
 import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -55,7 +55,7 @@ import javafx.util.Callback;
 import javafx.util.StringConverter;
 
 public class MainSceneController implements Initializable {
-	
+
 	private static final Path PREFERENCES_PROPERTIES = Paths.get("preferences.properties");
 
 	private static final String EULA_COMMENT = "By changing the setting below to TRUE you are indicating your agreement to our EULA (https://account.mojang.com/documents/minecraft_eula).";
@@ -65,8 +65,8 @@ public class MainSceneController implements Initializable {
 	private PathWatcher pathWatcher;
 	private Properties preferences;
 
-	private final BidiMap<ServerConfig, TitledPane> paneMap = new DualHashBidiMap<>();
-	private final BidiMap<ServerConfig, Tab> tabMap = new DualHashBidiMap<>();
+	private final BidiMap<Server, TitledPane> paneMap = new DualHashBidiMap<>();
+	private final BidiMap<Server, Tab> tabMap = new DualHashBidiMap<>();
 
 	@FXML
 	private Scene scene;
@@ -92,17 +92,17 @@ public class MainSceneController implements Initializable {
 			scene.getRoot().setStyle(getCss());
 		});
 		darkModeToggle.fire();
-		
+
 		tabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-			ServerConfig serverConfig = tabMap.getKey(newValue);
+			Server serverConfig = tabMap.getKey(newValue);
 			setSelectedServer(serverConfig);
 		});
 
 		initializePreferences();
 		Utils.loadServerConfigs().forEach(serverConfig -> createServerPane(serverConfig));
 
-		getServerConfigs().stream().findFirst()
-			.ifPresentOrElse(serverConfig -> setSelectedServer(serverConfig), () -> createServer());
+		getServerConfigs().stream().findFirst().ifPresentOrElse(serverConfig -> setSelectedServer(serverConfig),
+				() -> createServer());
 	}
 
 	public String getCss() {
@@ -111,7 +111,7 @@ public class MainSceneController implements Initializable {
 		return css;
 	}
 
-	private Set<ServerConfig> getServerConfigs() {
+	private Set<Server> getServerConfigs() {
 		return paneMap.keySet();
 	}
 
@@ -133,7 +133,7 @@ public class MainSceneController implements Initializable {
 		}
 	}
 
-	private void setSelectedServer(ServerConfig serverConfig) {
+	private void setSelectedServer(Server serverConfig) {
 		if (serverConfig == null) {
 			return;
 		}
@@ -144,15 +144,15 @@ public class MainSceneController implements Initializable {
 		accordion.expandedPaneProperty().set(pane);
 	}
 
-	private TitledPane getServerPane(ServerConfig serverConfig) {
+	private TitledPane getServerPane(Server serverConfig) {
 		if (!paneMap.containsKey(serverConfig)) {
 			createServerPane(serverConfig);
 		}
 		return paneMap.get(serverConfig);
 	}
 
-	private TitledPane createServerPane(ServerConfig serverConfig) {
-		Path serverDirectory = serverConfig.getServerDirectory();
+	private TitledPane createServerPane(Server serverConfig) {
+		Path serverDirectory = serverConfig.getDirectory();
 		TreeItem<Path> root = buildTreeItem(serverDirectory);
 		TreeView<Path> treeView = new TreeView<>(root);
 
@@ -207,7 +207,7 @@ public class MainSceneController implements Initializable {
 				});
 			}
 		});
-		TitledPane pane = new TitledPane(serverConfig.getServerName(), treeView);
+		TitledPane pane = new TitledPane(serverConfig.getName(), treeView);
 		pane.expandedProperty()
 				.addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
 					if (newValue.booleanValue()) {
@@ -231,16 +231,16 @@ public class MainSceneController implements Initializable {
 		return pane;
 	}
 
-	private Tab getServerTab(ServerConfig serverConfig) {
+	private Tab getServerTab(Server serverConfig) {
 		if (!tabMap.containsKey(serverConfig)) {
 			createServerTab(serverConfig);
 		}
 		return tabMap.get(serverConfig);
 	}
 
-	private Tab createServerTab(ServerConfig serverConfig) {
+	private Tab createServerTab(Server serverConfig) {
 		Tab tab = new Tab();
-		tab.setText(serverConfig.getServerName());
+		tab.setText(serverConfig.getName());
 		try {
 			FXMLLoader loader = Utils.fxmlLoader(ServerPageController.class);
 			Parent parent = loader.load();
@@ -317,7 +317,7 @@ public class MainSceneController implements Initializable {
 
 	}
 
-	private void initializeServer(ServerConfig serverConfig) {
+	private void initializeServer(Server serverConfig) {
 		// Save data
 		Utils.runFX(() -> {
 			setSelectedServer(serverConfig);
@@ -331,16 +331,8 @@ public class MainSceneController implements Initializable {
 			FXMLLoader loader = Utils.fxmlLoader(CreateDialogController.class);
 			Dialog<ButtonType> dialog = loader.load();
 			CreateDialogController controller = loader.getController();
-			controller.setServerConfigs(getServerConfigs());
-			controller.setDefaultServerDirectory(Paths.get(preferences.getProperty("default.server.directory")));
 			dialog.showAndWait().filter(response -> response.getButtonData().isDefaultButton()).ifPresent(response -> {
-				ServerConfig serverConfig = new ServerConfig();
-				serverConfig.setServerName(controller.getServerName());
-				serverConfig.setServerDirectory(controller.getServerDirectory());
-				serverConfig.setMinecraftServerJar(Paths.get(preferences.getProperty("default.minecraft.jar")));
-				serverConfig.setMaximumMemory(preferences.getProperty("default.maximum.memory"));
-				serverConfig.setInitialMemory(preferences.getProperty("default.initial.memory"));
-
+				Server serverConfig = controller.generateServerConfg();
 				initializeServer(serverConfig);
 			});
 
@@ -349,34 +341,9 @@ public class MainSceneController implements Initializable {
 		}
 	}
 
-	public void importServer() {
-		try {
-			FXMLLoader loader = Utils.fxmlLoader(CreateDialogController.class);
-			Dialog<ButtonType> dialog = loader.load();
-			CreateDialogController controller = loader.getController();
-			dialog.setTitle("Import Server");
-			controller.setServerConfigs(getServerConfigs());
-			controller.setDefaultServerDirectory(Paths.get(preferences.getProperty("default.server.directory")));
-			dialog.showAndWait().filter(response -> Objects.equals(response.getButtonData(), ButtonData.OK_DONE))
-					.ifPresent(response -> {
-						// Create new ServerConfig
-						ServerConfig serverConfig = new ServerConfig();
-						serverConfig.setServerName(controller.getServerName());
-						serverConfig.setServerDirectory(controller.getServerDirectory());
-						serverConfig.setMinecraftServerJar(Paths.get(preferences.getProperty("default.minecraft.jar")));
-						serverConfig.setMaximumMemory(preferences.getProperty("default.maximum.memory"));
-						serverConfig.setInitialMemory(preferences.getProperty("default.initial.memory"));
-
-						initializeServer(serverConfig);
-					});
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
 	public void deleteServer() {
 		Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
-		ServerConfig selectedConfig = tabMap.getKey(selectedTab);
+		Server selectedConfig = tabMap.getKey(selectedTab);
 		TitledPane pane = paneMap.get(selectedConfig);
 
 		tabPane.getTabs().remove(selectedTab);
@@ -388,8 +355,8 @@ public class MainSceneController implements Initializable {
 		Utils.startThread(() -> saveAllServers());
 	}
 
-	private void acceptEula(ServerConfig serverConfig) {
-		Path eulaPath = Paths.get(serverConfig.getServerDirectory() + "/eula.txt");
+	private void acceptEula(Server serverConfig) {
+		Path eulaPath = Paths.get(serverConfig.getDirectory() + "/eula.txt");
 		Properties props = new Properties();
 		props.setProperty("eula", "true");
 		Utils.storeProperties(props, eulaPath, EULA_COMMENT);
@@ -403,37 +370,38 @@ public class MainSceneController implements Initializable {
 		try {
 			FXMLLoader loader = Utils.fxmlLoader(PropertiesDialogController.class);
 			Dialog<ButtonType> dialog = loader.load();
-			dialog.getDialogPane().setStyle(getCss());
 			PropertiesDialogController controller = loader.getController();
+			dialog.getDialogPane().setStyle(getCss());
 
-			ServerConfig selectedServer = getSelectedServer();
-			Path serverDirectory = selectedServer.getServerDirectory();
-			Path propertiesPath = serverDirectory.resolve("server.properties");
-			Properties serverProperties = Utils.loadProperties(propertiesPath);
-			Collection<Property<?>> properties = Utils.loadServerProperties();
-			for (Property<?> property : properties) {
+			Server selectedServer = getSelectedServer();
+			Path directoryPath = selectedServer.getDirectory();
+			Path propertiesPath = directoryPath.resolve("server.properties");
+			Properties properties = Utils.loadProperties(propertiesPath);
+			Map<String, ServerProperty<?>> serverProperties = Utils.loadServerProperties();
+			for (ServerProperty<?> serverProperty : serverProperties.values()) {
 				try {
-					String propertyValue = serverProperties.getProperty(property.getKey());
-					property.setValueString(propertyValue);
+					String key = serverProperty.getKey();
+					String stringValue = properties.getProperty(key);
+					serverProperty.coerceValue(stringValue);
 				} catch (ConversionException e) {
 					e.printStackTrace();
 				}
 			}
-			controller.setProperties(properties);
+			controller.setServerProperties(serverProperties);
 
 			dialog.showAndWait().filter(response -> {
 				return Objects.equals(response.getButtonData(), ButtonData.OK_DONE);
 			}).ifPresent(response -> {
-				selectedServer.setServerProperties(controller.asProperties());
 				Utils.storeProperties(controller.asProperties(), propertiesPath);
 			});
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	private ServerConfig getSelectedServer() {
+
+	private Server getSelectedServer() {
 		Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
-		ServerConfig selectedServer = tabMap.getKey(selectedTab);
+		Server selectedServer = tabMap.getKey(selectedTab);
 		return selectedServer;
 	}
 

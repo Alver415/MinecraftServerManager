@@ -37,26 +37,28 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ButtonType?>
 <?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.TextFlow?>
 <?import javafx.scene.text.Text?>
 
-<?import org.alver415.javafx.scene.control.TextFieldForm?>
+<?import org.alver415.javafx.scene.control.input.InputTextField?>
 
 
-<Dialog xmlns="http://javafx.com/javafx/16"
-	xmlns:fx="http://javafx.com/fxml/1"
+<Dialog xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1"
 	fx:controller="org.alver415.minecraft.server.wrapper.create.CreateDialogController"
-	title="Create Server"
+	title="Server Information"
 	fx:id="dialog">
 	<dialogPane>
 		<DialogPane>
 			<content>
 				<VBox spacing="2">
-					<ScrollPane prefHeight="400" fitToWidth="true">
-						<VBox fx:id="vbox" />
-					</ScrollPane>
+					<InputTextField fx:id="nameInput" labelText="Name"/>
+					<InputTextField fx:id="directoryInput" labelText="Directory"/>
+					<InputTextField fx:id="minecraftJarInput" labelText="Minecraft JAR"/>
+					<InputTextField fx:id="initialMemoryInput" labelText="Initial Memory"/>
+					<InputTextField fx:id="maximumMemoryInput" labelText="Maximum Memory"/>
 					<Text fx:id="validationMessage" fill="RED" text="" />
 					<Text text="By clicking 'Accept' you are indicating your agreement to Mojang's EULA." />
 					<Hyperlink fx:id="eulaHyperlink" text="https://account.mojang.com/documents/minecraft_eula" />
@@ -67,7 +69,5 @@
 				<ButtonType fx:constant="CLOSE" />
 			</buttonTypes>
 		</DialogPane>
-
-
 	</dialogPane>
 </Dialog>

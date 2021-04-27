@@ -10,7 +10,6 @@ public class StringDomain extends AbstractDomain<String> {
 
 	protected String regex;
 
-
 	public String getRegex() {
 		return regex;
 	}

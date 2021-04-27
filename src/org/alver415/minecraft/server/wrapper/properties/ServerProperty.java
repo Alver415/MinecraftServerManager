@@ -1,9 +1,11 @@
-package org.alver415.minecraft.server.wrapper.input;
+package org.alver415.minecraft.server.wrapper.properties;
 
 import org.alver415.minecraft.server.wrapper.Utils;
+import org.alver415.minecraft.server.wrapper.input.ConversionException;
+import org.alver415.minecraft.server.wrapper.input.InvalidValueException;
 import org.alver415.minecraft.server.wrapper.input.domain.Domain;
 
-public class Property<T> {
+public class ServerProperty<T> {
 
 	protected String key;
 	protected String name;
@@ -26,7 +28,7 @@ public class Property<T> {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	public Class<T> getType() {
 		return type;
 	}
@@ -53,12 +55,6 @@ public class Property<T> {
 
 	/* == Helper Methods == */
 
-	public void setValueString(String strValue) throws ConversionException {
-		T converted = Utils.convert(strValue, type);
-		setValue(converted);
-	}
-
-	
 	public T getDefaultValue() {
 		return domain == null ? null : domain.getDefaultValue();
 	}
@@ -68,5 +64,10 @@ public class Property<T> {
 			domain.validate(input);
 		}
 	}
-	
+
+	public void coerceValue(String stringValue) throws ConversionException {
+		T converted = Utils.convert(stringValue, type);
+		this.setValue(converted);
+	}
+
 }
